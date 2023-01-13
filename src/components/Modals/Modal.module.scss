@@ -1,0 +1,46 @@
+.dialog {
+  position: absolute;
+  width: 300px;
+  top: 25vh;
+  left: calc(50vw - 150px);
+  background: white;
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 10px;
+  margin: 0;
+  z-index: 2;
+
+  .title {
+    text-align: center;
+    text-transform: uppercase;
+    color: blue;
+    font-size: 22px;
+  }
+
+  .message {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .score {
+    font-weight: bold;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: center;
+
+    .button {
+      width: 70%;
+      height: 30px;
+      background: cornflowerblue;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      color: white;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+  }
+}
