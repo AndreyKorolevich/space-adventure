@@ -55,9 +55,11 @@ const drawStar = (cx: number, cy: number, spikes: number, outerRadius: number, i
 
 export const drawParticles = (ctx: CanvasRenderingContext2D, particle: ParticleInterface) => {
   ctx.save()
+  ctx.globalAlpha = particle.opacity
   drawCircleOnCanvas(ctx, particle)
   ctx.restore()
   gravityOfFallingObject(particle)
+  particle.opacity -= 0.003
 }
 export const drawEnemies = (
   ctx: CanvasRenderingContext2D,
@@ -87,5 +89,18 @@ export const gravityOfFallingObject = (object: ParticleInterface) => {
   object.velocity.y += object.gravity
   object.x = object.x + object.velocity.x
   object.y = object.y + object.velocity.y
-  object.opacity -= 0.004
+
+}
+
+export const drawBackground = ( ctx: CanvasRenderingContext2D, backgroundParticles: Array<ParticleInterface>) => {
+  backgroundParticles.forEach(particle => {
+    ctx.save()
+    drawCircleOnCanvas(ctx, particle)
+    ctx.restore()
+    gravityOfFallingObject(particle)
+    if(particle.y > window.innerHeight){
+      particle.y = 0
+      particle.x = Math.round(Math.random() * document.body.clientWidth)
+    }
+  })
 }

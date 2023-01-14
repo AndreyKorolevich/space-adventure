@@ -3,6 +3,7 @@ import preDraw from './predraw'
 import postDraw from './postdraw'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
 import {
+  fillBackgroundByParticles,
   setRefreshRate,
   sourceGame,
   SourceGameObjectType
@@ -46,11 +47,14 @@ const Canvas: React.FC<unknown> = () => {
   useEffect(() => {
     const enemies: Array<Array<EnemyInterface>> = []
     const particles: Array<ParticleInterface> = []
+    const backgroundParticles: Array<ParticleInterface> = []
     const projectiles: Array<ProjectileInterface> = []
     const enemyProjectiles: Array<EnemyProjectileInterface> = []
     const bonuses: Array<BonusInterface> = []
+
+    fillBackgroundByParticles(backgroundParticles)
 // @ts-ignore
-    window.enemies = enemies
+    window.particles = particles
     const canvas: CanvasType = canvasRef?.current
     const context = canvas?.getContext('2d') as CanvasRenderingContext2D
 
@@ -89,6 +93,7 @@ const Canvas: React.FC<unknown> = () => {
       const sourceGameObject: SourceGameObjectType = {
         enemies,
         particles,
+        backgroundParticles,
         projectiles,
         enemyProjectiles,
         bonuses,

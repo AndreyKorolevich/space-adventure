@@ -1,7 +1,7 @@
 import {
   BonusInterface,
-  EnemyInterface, EnemyProjectileInterface,
-  EnemyType,
+  EnemyInterface,
+  EnemyProjectileInterface,
   ParticleInterface,
   ProjectileInterface
 } from '../reducers/canvasReducer'
@@ -13,14 +13,7 @@ import {
   BONUS_INNER_RADIUS,
   BONUS_OUTER_RADIUS,
   BONUS_SPIKES, BONUS_TIME,
-  ENEMY_TYPE_SPINNING,
-  ENEMY_TYPE_SPINNING_TRACKING,
-  ENEMY_TYPE_STATIC,
-  ENEMY_TYPE_TRACKING,
-  MAX_ENEMY_SIZE,
-  MIN_ENEMY_SIZE,
   SHOT_SIZE,
-  SPIED_ENEMY,
   SPIED_SHOTS,
   xCenter,
   yCenter
@@ -47,21 +40,21 @@ export const removeProjectileOfScreen = (
   }
 }
 export const addParticles = (
-  enemy: EnemyInterface,
-  projectile: ProjectileInterface,
-  particles: Array<ParticleInterface>
+  object: EnemyInterface | PlayerInterface,
+  projectile: ProjectileInterface | EnemyProjectileInterface,
+  particles: Array<ParticleInterface>,
+  color?: string
 ) => {
-  const angle = Math.atan2(enemy.y - projectile.y, enemy.x - projectile.x)
 
-  const xCollision = enemy.x - (enemy.width * Math.cos(angle))
-  const yCollision = enemy.y - (enemy.height * Math.sin(angle))
-  const particleColor = 'purple'
+  const xCollision = object.x + object.width / 2
+  const yCollision = object.y + (object.height / (color ? 1 : 2) ) // we change divider to move the center of crating particles for an enemy or the player
+  const particleColor = color || '#BAA0DE'
 
   for (let i = 0; i < 20; i++) {
-    const particleRadius = Math.random() * 2
+    const particleRadius = Math.random() * 3
     const particleVelocity = {
-      x: (Math.random() - 0.5) * (Math.random() * 5),
-      y: (Math.random() - 0.5) * (Math.random() * 5)
+      x: (Math.random() - 0.5) * (Math.random() * 3),
+      y: (Math.random() - 0.5) * (Math.random() * 3)
     }
 
     const newParticle: ParticleInterface = {
@@ -70,7 +63,7 @@ export const addParticles = (
       radius: particleRadius,
       color: particleColor,
       velocity: particleVelocity,
-      gravity: 0.005,
+      gravity: 0.002,
       friction: 0.99,
       opacity: 1
     }
