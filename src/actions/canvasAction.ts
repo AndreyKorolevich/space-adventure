@@ -3,6 +3,8 @@ import {
   ProjectileInterface,
   EnemyInterface,
   BonusInterface,
+  EnemyProjectileInterface,
+  BombInterface,
   INCREASE_GAME_NUMBER,
   INCREASE_SCORE,
   SHOW_FINAL_MODAL,
@@ -11,40 +13,35 @@ import {
   ADD_POINT,
   HIDE_START_MODAL,
   UPDATE_POINT_POSITIONS,
-  DELETE_POINT, UPDATE_COLOR_LAST_KILLED_ENEMY, EnemyProjectileInterface
+  DELETE_POINT
 } from '../reducers/canvasReducer'
 import { ActionTypes, ThunkType } from '../app/store'
 import {
-  REWORD_FOR_KILLED_ENEMY,
+  BIG_REWORD_FOR_KILLED_ENEMY,
   FREQUENCY_APPEAR_ENEMY,
   FREQUENCY_ENEMY_SHOT,
-  FREQUENCY_GUN_SHOT
+  FREQUENCY_GUN_SHOT, CANVAS_WIDTH, CANVAS_HEIGHT, FREQUENCY_APPEAR_BOMBS, SMALL_REWORD_FOR_KILLED_ENEMY, ENEMY_RADIUS
 } from '../game/constants'
 import refreshRate from 'refresh-rate'
 import { PlayerInterface } from '../game/Player'
 import {
+  addNewBomb,
   addNewEnemies,
   addParticles,
   addProjectile,
-  deleteCollision, removeParticles, removeProjectileOfScreen
+  deleteCollision, explodeBomb, moveBomb, removeEmptyEnemyBlock, removeParticles, removeProjectileOfScreen
 } from '../game/operationWithObjects'
 import { ControllerType } from '../game/controller'
 import { PointType } from '../components/Points/Point'
 import { endGameSound, enemyEliminatedSound, enemyHitSound } from '../utils/sounds'
 import {
-  drawBackground,
+  drawBackground, drawBomb,
   drawCircleOnCanvas,
   drawEnemies,
   drawParticles,
   drawRectangleOnCanvas
 } from '../game/drawObjects'
-import { Simulate } from 'react-dom/test-utils'
-import play = Simulate.play
-
-export type MousePositionType = {
-  x: number
-  y: number
-}
+import enemy from '../img/enemy.png'
 
 export const actionsCanvas = {
   increaseScoreAC: (count: number) => ({
@@ -88,12 +85,6 @@ export const actionsCanvas = {
     payload: {
       id
     }
-  } as const),
-  updateColorLastKilledEnemyAC: (color: string) => ({
-    type: UPDATE_COLOR_LAST_KILLED_ENEMY,
-    payload: {
-      color
-    }
   } as const)
 }
 
@@ -105,6 +96,7 @@ export type SourceGameObjectType = {
   particles: Array<ParticleInterface>
   backgroundParticles: Array<ParticleInterface>
   projectiles: Array<ProjectileInterface>
+  bombs: Array<BombInterface>
   enemyProjectiles: Array<EnemyProjectileInterface>
   player: PlayerInterface,
   controller: ControllerType,
@@ -123,21 +115,47 @@ export const sourceGame = (
     projectiles,
     enemyProjectiles,
     enemies,
+    bombs,
     particles,
     backgroundParticles,
     requestAnimationId,
     refreshCanvas
   } = sourceGameObject
 
-
   drawBackground(ctx, backgroundParticles)
 
+  //bombs section
+  bombs.forEach((bomb, i) => {
+    if (bomb.opacity <= 0) {
+      bombs.splice(i, 1)
+    } else {
+      drawBomb(ctx, bomb)
+      moveBomb(bomb)
+    }
+  })
+
+
   // projectiles section
-  projectiles.forEach((projectile: ProjectileInterface, indexP: number) => {
+  projectiles.forEach((projectile: ProjectileInterface, i: number) => {
+    bombs.forEach(bomb => {
+      // if projectile touches bomb, remove projectile
+      if (
+        Math.hypot(
+          projectile.x - bomb.x,
+          projectile.y - bomb.y
+        ) <
+        projectile.radius + bomb.radius &&
+        !bomb.active
+      ) {
+        projectiles.splice(i, 1)
+        explodeBomb(bomb)
+      }
+    })
+
     drawCircleOnCanvas(ctx, projectile)
     projectile.x = projectile.x + projectile.velocity.x
     projectile.y = projectile.y + projectile.velocity.y
-    removeProjectileOfScreen(projectiles, projectile, projectile.radius, indexP)
+    removeProjectileOfScreen(projectiles, projectile, projectile.radius, i)
   })
 
   // enemy projectiles section
@@ -153,11 +171,11 @@ export const sourceGame = (
     ) {
       endGameSound()
       dispatch(actionsCanvas.showFinalModalAC())
-      addParticles(player, projectile, particles, 'white')
+      addParticles(player, particles, 'white')
       enemyProjectiles.splice(indexP, 1)
       player.width = 0
       player.height = 0
-      //cancelAnimationFrame(requestAnimationId)
+      player.isDead = true
     }
 
   })
@@ -183,37 +201,33 @@ export const sourceGame = (
   // enemies section
   for (let i = 0; i < enemies.length; i++) {
     const enemiesBlock = enemies[i]
-    enemiesBlock.forEach((enemy, indexEnemies: number) => {
+    enemiesBlock.forEach((enemy, enemyIndex: number) => {
       drawEnemies(ctx, enemy, enemiesBlock)
       dispatch(checkFinishGame(enemy, requestAnimationId, player))
-      dispatch(managePlayerShot(projectiles, enemiesBlock, particles, enemy, indexEnemies))
+      dispatch(managePlayerShot(projectiles, enemiesBlock, particles, enemy, enemyIndex))
+      dispatch(checkBombTouchEnemy(bombs, enemiesBlock, particles, enemy, enemyIndex))
     })
 
-    if (enemiesBlock.length === 0) {
-      setTimeout(() => {
-        enemies.splice(i, 1)
-      }, 0)
-    }
+    removeEmptyEnemyBlock(enemiesBlock, enemies, i)
+    enemyShot(enemiesBlock, enemyProjectiles, refreshCanvas)
+  }
 
-    const randomEnemy = Math.round(Math.random() * (enemiesBlock.length - 1))
-    if (refreshCanvas % FREQUENCY_ENEMY_SHOT === 0) {
-      const projectile: EnemyProjectileInterface = {
-        color: 'red',
-        height: 15,
-        width: 3,
-        velocity: {
-          x: 0,
-          y: 2
-        },
-        x: enemiesBlock[randomEnemy]?.x,
-        y: enemiesBlock[randomEnemy]?.y
-      }
-      enemyProjectiles.push(projectile)
-    }
+  //player section
+  if (!player.isDead) {
+    player.update()
+  } else if (player.isDead && player.timeAfterDead > 0) {
+    player.update()
+    player.timeAfterDead -= 1
+  } else {
+    cancelAnimationFrame(requestAnimationId)
   }
 
   if (refreshCanvas % FREQUENCY_APPEAR_ENEMY === 0) {
     addNewEnemies(enemies)
+  }
+
+  if (refreshCanvas % FREQUENCY_APPEAR_BOMBS === 0 && bombs.length < 3) {
+    addNewBomb(bombs)
   }
 }
 
@@ -230,10 +244,10 @@ export const managePlayerShot = (
     if (distance < projectile.radius + enemy.width) {
       enemyEliminatedSound()
       deleteCollision(projectiles, enemyBlock, indexP, indexEnemies)
-      dispatch(actionsCanvas.increaseScoreAC(REWORD_FOR_KILLED_ENEMY))
-      addParticles(enemy, projectile, particles)
+      dispatch(actionsCanvas.increaseScoreAC(BIG_REWORD_FOR_KILLED_ENEMY))
+      addParticles(enemy, particles)
 
-      const point: PointType = createPoints(enemy, projectile, REWORD_FOR_KILLED_ENEMY)
+      const point: PointType = createPoints(enemy, projectile, BIG_REWORD_FOR_KILLED_ENEMY)
       dispatch(actionsCanvas.addPointAC(point))
     }
   })
@@ -244,7 +258,7 @@ export const checkFinishGame = (
   enemy: EnemyInterface,
   requestAnimationId: number,
   player: PlayerInterface
-): ThunkType<CanvasActionTypes> => async (dispatch, getState) => {
+): ThunkType<CanvasActionTypes> => async (dispatch) => {
   const distanceToPlayer = Math.hypot(enemy.x - player.x, enemy.y - player.y)
   if (distanceToPlayer < enemy.height) {
     dispatch(actionsCanvas.showFinalModalAC())
@@ -263,7 +277,7 @@ export const machineGunModeShooting = (
   player: PlayerInterface,
   controller: ControllerType,
   refreshCanvas: number
-): ThunkType<CanvasActionTypes> => async (distance, getState) => {
+): ThunkType<CanvasActionTypes> => async () => {
 
   if (refreshCanvas % FREQUENCY_GUN_SHOT === 0 && controller['Mouse'].pressed) {
     addProjectile(projectiles, player)
@@ -272,7 +286,7 @@ export const machineGunModeShooting = (
 
 export const createPoints = (
   enemy: EnemyInterface,
-  projectile: ProjectileInterface,
+  projectile: ProjectileInterface | EnemyInterface,
   count: number
 ) => {
   const angle = Math.atan2(enemy.y - projectile.y, enemy.x - projectile.x)
@@ -290,31 +304,70 @@ export const createPoints = (
 }
 
 export const fillBackgroundByParticles = (backgroundParticles: Array<ParticleInterface>) => {
-  const colors = ['white','#021F4B', '#4C3B71', '#115268']
+  const colors = ['white', '#021F4B', '#4C3B71', '#115268']
   for (let i = 0; i < 100; i++) {
-    const xCollision = Math.random() * document.body.clientWidth
-    const yCollision = Math.random()  * window.innerHeight
+    const xCollision = Math.random() * CANVAS_WIDTH
+    const yCollision = Math.random() * CANVAS_HEIGHT
     const color = colors[Math.floor(Math.random() * colors.length)]
 
-      const particleRadius = Math.random() * 4
-      const particleVelocity = {
-        x: 0,
-        y: 0.1
-      }
+    const particleRadius = Math.random() * 4
+    const particleVelocity = {
+      x: 0,
+      y: 0.1
+    }
 
-      const newParticle: ParticleInterface = {
-        x: xCollision,
-        y: yCollision,
-        radius: particleRadius,
-        color,
-        velocity: particleVelocity,
-        gravity: 0.002,
-        friction: 0.99,
-        opacity: 1
-      }
+    const newParticle: ParticleInterface = {
+      x: xCollision,
+      y: yCollision,
+      radius: particleRadius,
+      color,
+      velocity: particleVelocity,
+      gravity: 0.002,
+      friction: 0.99,
+      opacity: 1
+    }
     backgroundParticles.push(newParticle)
+  }
+}
 
+export const checkBombTouchEnemy = (
+  bombs: Array<BombInterface>,
+  enemiesBlock: Array<EnemyInterface>,
+  particles: Array<ParticleInterface>,
+  enemy: EnemyInterface,
+  enemyIndex: number
+): ThunkType<CanvasActionTypes> => async (dispatch) => {
+  bombs.forEach(bomb => {
+    // if bomb touches enemy, remove enemy
+    if (Math.hypot(enemy.x - bomb.x, enemy.y - bomb.y) < ENEMY_RADIUS + bomb.radius && bomb.active) {
+      dispatch(actionsCanvas.increaseScoreAC(SMALL_REWORD_FOR_KILLED_ENEMY))
+      enemiesBlock.splice(enemyIndex, 1)
+      addParticles(enemy, particles)
+      const point: PointType = createPoints(enemy, enemy, SMALL_REWORD_FOR_KILLED_ENEMY)
+      dispatch(actionsCanvas.addPointAC(point))
+    }
+  })
+}
 
+const enemyShot = (
+  enemiesBlock: Array<EnemyInterface>,
+  enemyProjectiles: Array<EnemyProjectileInterface>,
+  refreshCanvas: number
+) => {
+  const randomEnemy = Math.round(Math.random() * (enemiesBlock.length - 1))
+  if (refreshCanvas % FREQUENCY_ENEMY_SHOT === 0) {
+    const projectile: EnemyProjectileInterface = {
+      color: 'red',
+      height: 15,
+      width: 3,
+      velocity: {
+        x: 0,
+        y: 2
+      },
+      x: enemiesBlock[randomEnemy]?.x,
+      y: enemiesBlock[randomEnemy]?.y
+    }
+    enemyProjectiles.push(projectile)
   }
 }
 

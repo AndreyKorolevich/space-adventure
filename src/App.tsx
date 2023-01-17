@@ -8,15 +8,16 @@ import StartModal from './components/Modals/StartModal/StartModal'
 
 const App: React.FC<unknown> = () => {
   const score = useAppSelector(state => state.canvasReducer.score)
+  const isShowStartModal = useAppSelector(state => state.canvasReducer.isShowStartModal)
 
   return (
-    <>
-      <div className={'score'}>{score}</div>
+    <div className={'App'}>
+      {!isShowStartModal && <div className={'score'}>Score: {score}</div>}
       <FinalModal />
       <StartModal />
       <Canvas />
       <Points />
-    </>
+    </div>
   )
 }
 

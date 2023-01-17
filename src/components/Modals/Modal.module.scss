@@ -1,8 +1,8 @@
 .dialog {
   position: absolute;
   width: 300px;
-  top: 25vh;
-  left: calc(50vw - 150px);
+  top: calc(50% - 50px);
+  left: calc(50% - 150px);
   background: white;
   border-radius: 10px;
   box-sizing: border-box;

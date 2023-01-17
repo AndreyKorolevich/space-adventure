@@ -1,10 +1,11 @@
 import { CanvasType } from './Canvas'
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../game/constants'
 
 
 const resizeCanvasWithDevicePixelRatio = (canvas: CanvasType) => {
   if (canvas) {
-      const width = document.body.clientWidth
-      const height =document.documentElement.clientHeight
+      const width = CANVAS_WIDTH
+      const height = CANVAS_HEIGHT
 
 
     if (canvas.width !== width || canvas.height !== height) {

@@ -11,6 +11,8 @@ export interface PlayerInterface {
   draw: () => void
   update: () => void
   machineGunMode: boolean
+  isDead: boolean,
+  timeAfterDead: number
 }
 
 export class Player  {
@@ -22,6 +24,8 @@ export class Player  {
   ctx: CanvasRenderingContext2D
   machineGunMode: boolean
   image: HTMLImageElement
+  isDead: boolean
+  timeAfterDead: number
   constructor(x: number, y: number, image: HTMLImageElement, ctx: CanvasRenderingContext2D) {
     this.ctx = ctx
     this.machineGunMode = false
@@ -31,6 +35,8 @@ export class Player  {
     this.x = x
     this.y = y - this.height * 2
     this.rotation = 0
+    this.isDead = false
+    this.timeAfterDead = 300
   }
 
   draw() {

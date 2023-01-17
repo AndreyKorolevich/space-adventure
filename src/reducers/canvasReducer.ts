@@ -1,13 +1,7 @@
 import { CanvasActionTypes } from '../actions/canvasAction'
-import {
-  ENEMY_TYPE_SPINNING,
-  ENEMY_TYPE_SPINNING_TRACKING,
-  ENEMY_TYPE_STATIC,
-  ENEMY_TYPE_TRACKING
-} from '../game/constants'
 import { PointType } from '../components/Points/Point'
 
-export const SET_MOUSE_POSITION = 'SET_MOUSE_POSITION'
+
 export const INCREASE_SCORE = 'INCREASE_SCORE'
 export const SHOW_FINAL_MODAL = 'SHOW_FINAL_MODAL'
 export const HIDE_START_MODAL = 'HIDE_START_MODAL'
@@ -29,11 +23,6 @@ export interface GameObjectInterface {
   }
 }
 
-export type EnemyType = typeof ENEMY_TYPE_STATIC |
-  typeof ENEMY_TYPE_TRACKING |
-  typeof ENEMY_TYPE_SPINNING |
-  typeof ENEMY_TYPE_SPINNING_TRACKING
-
 export interface ParticleInterface extends GameObjectInterface {
   radius: number
   opacity: number
@@ -48,6 +37,12 @@ export interface ProjectileInterface extends GameObjectInterface {
 export interface EnemyProjectileInterface extends GameObjectInterface {
   height: number
   width: number
+}
+
+export interface BombInterface extends GameObjectInterface{
+  radius: number
+  opacity: number
+  active: boolean
 }
 
 
@@ -147,12 +142,6 @@ export default (state: CanvasStateType = initialState, action: CanvasActionTypes
         points: [...state.points, action.payload.point]
       }
     }
-    case UPDATE_COLOR_LAST_KILLED_ENEMY: {
-      return {
-        ...state,
-        colorLastKilledEnemy: action.payload.color
-      }
-    }
     case DELETE_POINT: {
       return {
         ...state,
@@ -178,3 +167,5 @@ export default (state: CanvasStateType = initialState, action: CanvasActionTypes
       return state
   }
 }
+
+

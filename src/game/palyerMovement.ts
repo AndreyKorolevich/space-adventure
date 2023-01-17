@@ -1,5 +1,5 @@
 import { PlayerInterface } from './Player'
-import { PLAYER_SPED } from './constants'
+import { CANVAS_WIDTH, PLAYER_SPED } from './constants'
 import { ControllerType } from './controller'
 import { ProjectileInterface } from '../reducers/canvasReducer'
 import { addProjectile } from './operationWithObjects'
@@ -22,7 +22,7 @@ export const moveDown = (player: PlayerInterface) => () => {
   // }
 }
 export const moveRight = (player: PlayerInterface) => () => {
-  if (player.x < document.body.clientWidth - player.height * 2) {
+  if (player.x < CANVAS_WIDTH - player.height * 2) {
     player.x = player.x + PLAYER_SPED
     player.rotation = 0.15
   }

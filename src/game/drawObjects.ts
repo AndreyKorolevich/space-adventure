@@ -1,9 +1,11 @@
 import {
+  BombInterface,
   BonusInterface,
   EnemyInterface, EnemyProjectileInterface,
   ParticleInterface,
   ProjectileInterface
 } from '../reducers/canvasReducer'
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from './constants'
 
 
 export const drawCircleOnCanvas = (ctx: CanvasRenderingContext2D, object: ProjectileInterface) => {
@@ -12,6 +14,18 @@ export const drawCircleOnCanvas = (ctx: CanvasRenderingContext2D, object: Projec
   ctx.fillStyle = object.color
   ctx.fill()
 }
+export const drawBomb = (ctx: CanvasRenderingContext2D, object: BombInterface) => {
+  ctx.save()
+  ctx.globalAlpha = object.opacity
+  ctx.beginPath()
+  ctx.arc(object.x, object.y, object.radius, 0, Math.PI * 2, false)
+  ctx.closePath()
+  ctx.fillStyle = object.color
+  ctx.fill()
+  ctx.restore()
+}
+
+
 export const drawRectangleOnCanvas = (ctx: CanvasRenderingContext2D, object: EnemyProjectileInterface) => {
   ctx.beginPath()
   ctx.rect(object.x, object.y, object.width, object.height)
@@ -67,7 +81,7 @@ export const drawEnemies = (
   enemiesBlock: Array<EnemyInterface>,
 ) => {
   ctx.drawImage(enemy.image, enemy.x, enemy.y, enemy.width, enemy.height)
-  if(enemy.x + enemy.width > document.body.clientWidth) {
+  if(enemy.x + enemy.width > CANVAS_WIDTH) {
     enemiesBlock.forEach(enemy => {
       enemy.velocity.x = -1
       enemy.y += 10
@@ -98,9 +112,9 @@ export const drawBackground = ( ctx: CanvasRenderingContext2D, backgroundParticl
     drawCircleOnCanvas(ctx, particle)
     ctx.restore()
     gravityOfFallingObject(particle)
-    if(particle.y > window.innerHeight){
+    if(particle.y > CANVAS_HEIGHT){
       particle.y = 0
-      particle.x = Math.round(Math.random() * document.body.clientWidth)
+      particle.x = Math.round(Math.random() * CANVAS_WIDTH)
     }
   })
 }

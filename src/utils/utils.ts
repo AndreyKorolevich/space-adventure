@@ -1,3 +1,5 @@
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../game/constants'
+
 export const randomIntFromRange = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
@@ -31,11 +33,11 @@ export const randomStartPosition = (objectSize: number) => {
   let yPos = 0
 
   if (Math.random() > 0.5) {
-    xPos = Math.random() > 0.5 ? (0 - objectSize) : (document.body.clientWidth + objectSize)
-    yPos = Math.random() * window.innerHeight
+    xPos = Math.random() > 0.5 ? (0 - objectSize) : (CANVAS_WIDTH + objectSize)
+    yPos = Math.random() * CANVAS_HEIGHT
   } else {
-    xPos = Math.random() * document.body.clientWidth
-    yPos = Math.random() > 0.5 ? (0 - objectSize) : (window.innerHeight + objectSize)
+    xPos = Math.random() * CANVAS_WIDTH
+    yPos = Math.random() > 0.5 ? (0 - objectSize) : (CANVAS_HEIGHT + objectSize)
   }
 
   return { xPos, yPos }

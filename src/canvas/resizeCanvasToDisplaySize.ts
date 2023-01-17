@@ -1,9 +1,10 @@
 import { CanvasType } from './Canvas'
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../game/constants'
 
 const resizeCanvasToDisplaySize = (canvas: CanvasType) => {
 
-  const width = document.body.clientWidth
-  const height = window.innerHeight
+  const width = CANVAS_WIDTH
+  const height = CANVAS_HEIGHT
   if (canvas) {
     if (canvas.width !== width || canvas.height !== height) {
       canvas.width = width

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import styles from './Canvas.module.scss'
 import preDraw from './predraw'
 import postDraw from './postdraw'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
@@ -14,6 +15,7 @@ import { controllerCreator, ControllerType } from '../game/controller'
 import { executeMoves } from '../game/palyerMovement'
 import spaceship from '../img/spaceship.png'
 import {
+  BombInterface,
   BonusInterface,
   EnemyInterface,
   EnemyProjectileInterface,
@@ -50,11 +52,12 @@ const Canvas: React.FC<unknown> = () => {
     const backgroundParticles: Array<ParticleInterface> = []
     const projectiles: Array<ProjectileInterface> = []
     const enemyProjectiles: Array<EnemyProjectileInterface> = []
+    const bombs: Array<BombInterface> = []
     const bonuses: Array<BonusInterface> = []
-
-    fillBackgroundByParticles(backgroundParticles)
 // @ts-ignore
-    window.particles = particles
+    window.bombs = bombs
+    fillBackgroundByParticles(backgroundParticles)
+
     const canvas: CanvasType = canvasRef?.current
     const context = canvas?.getContext('2d') as CanvasRenderingContext2D
 
@@ -68,12 +71,12 @@ const Canvas: React.FC<unknown> = () => {
     let refreshCount = 0
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (controller[event.code]) {
+      if (controller[event.code] && !player.isDead) {
         controller[event.code].pressed = true
       }
     }
     const handleKeyUp = (event: KeyboardEvent) => {
-      if (controller[event.code]) {
+      if (controller[event.code] && !player.isDead) {
         controller[event.code].pressed = false
 
         if(event.code === 'KeyA' || event.code === 'KeyD'){
@@ -97,6 +100,7 @@ const Canvas: React.FC<unknown> = () => {
         projectiles,
         enemyProjectiles,
         bonuses,
+        bombs,
         player,
         controller,
         ctx: context,
@@ -106,7 +110,6 @@ const Canvas: React.FC<unknown> = () => {
 
       if (!isShowStartModal) {
         preDraw(context, canvas)
-        player.update()
         executeMoves(controller)
         dispatch(sourceGame(sourceGameObject))
         postDraw(context)
@@ -125,7 +128,7 @@ const Canvas: React.FC<unknown> = () => {
 
   return (
     <>
-      <canvas ref={canvasRef} tabIndex={0} />
+      <canvas className={styles.canvas} ref={canvasRef} tabIndex={0} />
     </>
   )
 }
