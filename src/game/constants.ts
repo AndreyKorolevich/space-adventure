@@ -7,19 +7,19 @@ export const BONUS_INNER_RADIUS = 5
 export const BONUS_SPIKES = 5
 export const BONUS_BORDER_WIDTH = 5
 export const BONUS_TIME = 4000
-export const BONUS_COLOR = 'skyblue'
-export const BONUS_BORDER_COLOR = 'blue'
+export const BONUS_COLOR = 'yellow'
+export const BONUS_BORDER_COLOR = 'rgb(255, 165, 0)'
 export const BIG_REWORD_FOR_KILLED_ENEMY = 25
 export const SMALL_REWORD_FOR_KILLED_ENEMY = 10
-export const FREQUENCY_APPEAR_ENEMY = 1250
+export const FREQUENCY_APPEAR_ENEMY = 600
 export const ENEMY_RADIUS = 15
 export const FREQUENCY_APPEAR_BOMBS = 300
 export const BOMB_RADIUS = 30
 export const FREQUENCY_GUN_SHOT = 5
-export const FREQUENCY_ENEMY_SHOT = 360
-export const FREQUENCY_APPEAR_BONUS = 3000
+export const FREQUENCY_ENEMY_SHOT = 280
+export const FREQUENCY_APPEAR_BONUS = 1000
 export const FPS = 60
-export const PLAYER_SPED = 2
+export const PLAYER_SPED = 5
 
 
 

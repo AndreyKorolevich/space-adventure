@@ -20,22 +20,29 @@ import {
   BIG_REWORD_FOR_KILLED_ENEMY,
   FREQUENCY_APPEAR_ENEMY,
   FREQUENCY_ENEMY_SHOT,
-  FREQUENCY_GUN_SHOT, CANVAS_WIDTH, CANVAS_HEIGHT, FREQUENCY_APPEAR_BOMBS, SMALL_REWORD_FOR_KILLED_ENEMY, ENEMY_RADIUS
+  FREQUENCY_GUN_SHOT,
+  CANVAS_WIDTH,
+  CANVAS_HEIGHT,
+  FREQUENCY_APPEAR_BOMBS,
+  SMALL_REWORD_FOR_KILLED_ENEMY,
+  ENEMY_RADIUS,
+  FREQUENCY_APPEAR_BONUS
 } from '../game/constants'
 import refreshRate from 'refresh-rate'
 import { PlayerInterface } from '../game/Player'
 import {
-  addNewBomb,
+  addNewBomb, addNewBonus,
   addNewEnemies,
   addParticles,
-  addProjectile,
+  addProjectile, checkIntakeBonus,
   deleteCollision, explodeBomb, moveBomb, removeEmptyEnemyBlock, removeParticles, removeProjectileOfScreen
 } from '../game/operationWithObjects'
 import { ControllerType } from '../game/controller'
 import { PointType } from '../components/Points/Point'
+import nextId from "react-id-generator";
 import { endGameSound, enemyEliminatedSound, enemyHitSound } from '../utils/sounds'
 import {
-  drawBackground, drawBomb,
+  drawBackground, drawBomb, drawBonusOnCanvas,
   drawCircleOnCanvas,
   drawEnemies,
   drawParticles,
@@ -112,10 +119,12 @@ export const sourceGame = (
   const {
     ctx,
     player,
+    controller,
     projectiles,
     enemyProjectiles,
     enemies,
     bombs,
+    bonuses,
     particles,
     backgroundParticles,
     requestAnimationId,
@@ -134,6 +143,13 @@ export const sourceGame = (
     }
   })
 
+   //bonuses section
+  bonuses.forEach((bonus, indexB) => {
+    drawBonusOnCanvas(ctx, bonus)
+    projectiles.forEach((projectile, indexP) => {
+      checkIntakeBonus(bonuses, player, projectiles, controller, indexB, indexP)
+    })
+  })
 
   // projectiles section
   projectiles.forEach((projectile: ProjectileInterface, i: number) => {
@@ -161,7 +177,6 @@ export const sourceGame = (
   // enemy projectiles section
   enemyProjectiles.forEach((projectile: EnemyProjectileInterface, indexP) => {
     drawRectangleOnCanvas(ctx, projectile)
-    projectile.x = projectile.x + projectile.velocity.x
     projectile.y = projectile.y + projectile.velocity.y
     removeProjectileOfScreen(enemyProjectiles, projectile, projectile.height, indexP)
 
@@ -222,12 +237,16 @@ export const sourceGame = (
     cancelAnimationFrame(requestAnimationId)
   }
 
-  if (refreshCanvas % FREQUENCY_APPEAR_ENEMY === 0) {
+  if (refreshCanvas % FREQUENCY_APPEAR_ENEMY === 0 || enemies.length === 0) {
     addNewEnemies(enemies)
   }
 
   if (refreshCanvas % FREQUENCY_APPEAR_BOMBS === 0 && bombs.length < 3) {
     addNewBomb(bombs)
+  }
+
+   if (refreshCanvas % FREQUENCY_APPEAR_BONUS === 0) {
+    addNewBonus(bonuses)
   }
 }
 
@@ -299,7 +318,7 @@ export const createPoints = (
     top: yCollision,
     count,
     opacity: 1,
-    id: `${new Date().getTime() - Math.round(Math.random() * 1000)}`
+    id: nextId()
   }
 }
 
@@ -355,6 +374,7 @@ const enemyShot = (
   refreshCanvas: number
 ) => {
   const randomEnemy = Math.round(Math.random() * (enemiesBlock.length - 1))
+
   if (refreshCanvas % FREQUENCY_ENEMY_SHOT === 0) {
     const projectile: EnemyProjectileInterface = {
       color: 'red',
@@ -364,8 +384,8 @@ const enemyShot = (
         x: 0,
         y: 2
       },
-      x: enemiesBlock[randomEnemy]?.x,
-      y: enemiesBlock[randomEnemy]?.y
+      x: enemiesBlock[randomEnemy].x,
+      y: enemiesBlock[randomEnemy].y < 10 ? 10 : enemiesBlock[randomEnemy].y
     }
     enemyProjectiles.push(projectile)
   }

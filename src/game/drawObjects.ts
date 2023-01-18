@@ -36,8 +36,7 @@ export const drawBonusOnCanvas = (ctx: CanvasRenderingContext2D, bonus: BonusInt
   ctx.beginPath()
   drawStar(bonus.x, bonus.y, bonus.spikes, bonus.radius, bonus.innerRadius, ctx)
 
-  bonus.x = bonus.x - bonus.velocity.x
-  bonus.y = bonus.y - bonus.velocity.y
+  bonus.x = bonus.x + bonus.velocity.x
 
   ctx.closePath()
   ctx.lineWidth = bonus.borderWidth

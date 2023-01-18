@@ -54,8 +54,7 @@ const Canvas: React.FC<unknown> = () => {
     const enemyProjectiles: Array<EnemyProjectileInterface> = []
     const bombs: Array<BombInterface> = []
     const bonuses: Array<BonusInterface> = []
-// @ts-ignore
-    window.bombs = bombs
+
     fillBackgroundByParticles(backgroundParticles)
 
     const canvas: CanvasType = canvasRef?.current

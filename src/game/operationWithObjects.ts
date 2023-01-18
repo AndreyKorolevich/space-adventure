@@ -209,10 +209,13 @@ export const moveBomb = (bomb: BombInterface) => {
 }
 
 export const addNewBonus = (bonuses: Array<BonusInterface>) => {
-  const { xPos, yPos } = randomStartPosition(BONUS_OUTER_RADIUS)
-  const bonusVelocity = calculateObjectVelocity(yPos, yCenter, xPos, xCenter, 1)
+  const yPos = Math.floor(Math.random() * CANVAS_HEIGHT / 2 ) + BONUS_OUTER_RADIUS
+  const bonusVelocity = {
+    x: 1,
+    y: 0
+  }
   const newBonus = {
-    x: xPos,
+    x: 0,
     y: yPos,
     radius: BONUS_OUTER_RADIUS,
     innerRadius: BONUS_INNER_RADIUS,
@@ -225,28 +228,31 @@ export const addNewBonus = (bonuses: Array<BonusInterface>) => {
   }
   bonuses.push(newBonus)
 }
+
 export const checkIntakeBonus = (
   bonuses: Array<BonusInterface>,
-  bonus: BonusInterface,
   player: PlayerInterface,
+  projectiles: Array<ProjectileInterface>,
   controller: ControllerType,
-  indexB: number) => {
-  const distanceToPlayer = Math.hypot(bonus.x - player.x, bonus.y - player.y)
-  if (distanceToPlayer < bonus.radius + player.height) {
+  indexBonus: number,
+  indexProjectile: number
+) => {
+  const bonus = bonuses[indexBonus]
+  const projectile = projectiles[indexProjectile]
+  const distanceToPlayer = Math.hypot(bonus.x - projectile.x, bonus.y - projectile.y)
+  if (distanceToPlayer < bonus.radius + projectile.radius) {
     obtainPowerUpSound()
-    removeBonusFromCanvas(bonuses, indexB)
+    setTimeout(() => {
+      projectiles.splice(indexProjectile, 1)
+      bonuses.splice(indexBonus, 1)
+    }, 0)
+
     player.machineGunMode = true
     setTimeout(() => {
       player.machineGunMode = false
-      controller['Mouse'].pressed = false
     }, bonus.time)
   }
 }
 
-export const removeBonusFromCanvas = (bonuses: Array<BonusInterface>, indexB: number) => {
-  setTimeout(() => {
-    bonuses.splice(indexB, 1)
-  }, 0)
-}
 
 

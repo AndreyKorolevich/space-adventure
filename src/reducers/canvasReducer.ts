@@ -11,7 +11,7 @@ export const SET_REFRESH_RATE_MONITOR = 'SET_REFRESH_RATE_MONITOR'
 export const ADD_POINT = 'ADD_POINT'
 export const DELETE_POINT = 'DELETE_POINT'
 export const UPDATE_POINT_POSITIONS = 'UPDATE_POINT_POSITIONS'
-export const UPDATE_COLOR_LAST_KILLED_ENEMY = 'UPDATE_COLOR_LAST_KILLED_ENEMY'
+
 
 export interface GameObjectInterface {
   x: number
