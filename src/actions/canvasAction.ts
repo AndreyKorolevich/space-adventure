@@ -229,9 +229,9 @@ export const sourceGame = (
 
   //player section
   if (!player.isDead) {
-    player.update()
+    player.update(particles)
   } else if (player.isDead && player.timeAfterDead > 0) {
-    player.update()
+    player.update(particles)
     player.timeAfterDead -= 1
   } else {
     cancelAnimationFrame(requestAnimationId)

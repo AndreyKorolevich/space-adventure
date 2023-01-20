@@ -1,4 +1,5 @@
 import { PLAYER_SCALE } from './constants'
+import { ParticleInterface } from '../reducers/canvasReducer'
 
 export interface PlayerInterface {
   x: number
@@ -9,13 +10,13 @@ export interface PlayerInterface {
   image: HTMLImageElement
   ctx: CanvasRenderingContext2D
   draw: () => void
-  update: () => void
+  update: (particles: Array<ParticleInterface>) => void
   machineGunMode: boolean
   isDead: boolean,
   timeAfterDead: number
 }
 
-export class Player  {
+export class Player {
   x: number
   y: number
   width: number
@@ -26,6 +27,8 @@ export class Player  {
   image: HTMLImageElement
   isDead: boolean
   timeAfterDead: number
+  frames: number
+
   constructor(x: number, y: number, image: HTMLImageElement, ctx: CanvasRenderingContext2D) {
     this.ctx = ctx
     this.machineGunMode = false
@@ -37,6 +40,7 @@ export class Player  {
     this.rotation = 0
     this.isDead = false
     this.timeAfterDead = 300
+    this.frames = 0
   }
 
   draw() {
@@ -50,7 +54,26 @@ export class Player  {
     }
   }
 
-  update() {
+  update(particles: Array<ParticleInterface>) {
     this.draw()
+
+    this.frames++
+    if (this.frames % 2 === 0 && !this.isDead) {
+      particles.push(
+        {
+          x: this.x + this.width / 2,
+          y: this.y + this.height * 1.3,
+          velocity: {
+            x: (Math.random() - 0.5) * 1.5,
+            y: 1.4
+          },
+          radius: Math.random() * 2,
+          color: 'white',
+          opacity: 1,
+          gravity: 0.001,
+          friction: 0.97,
+        }
+      )
+    }
   }
 }
