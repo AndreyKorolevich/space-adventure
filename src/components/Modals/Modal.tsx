@@ -5,20 +5,22 @@ type ModalType = {
   isShowModal: boolean,
   onClick: () => void,
   title: string,
-  message: string,
+  message?: string,
   buttonText: string,
-  score?: number
+  score?: number,
+  children?: JSX.Element
 }
 
 const Modal: React.FC<ModalType> = (props) => {
-  const { isShowModal, onClick, title, message, score, buttonText } = props
+  const { isShowModal, onClick, title, message, score, buttonText, children } = props
 
   return (
     <dialog className={styles.dialog} open={isShowModal}>
-      <header>
+      <header className={styles.header}>
         <h3 className={styles.title}>{title}</h3>
       </header>
-      <main>
+      <main className={styles.main}>
+        {children}
         <div className={styles.message}>{message}
           {score && <span className={styles.score}>{score}</span>}
         </div>

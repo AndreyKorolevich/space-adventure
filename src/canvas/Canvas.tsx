@@ -127,7 +127,7 @@ const Canvas: React.FC<unknown> = () => {
 
   return (
     <>
-      <canvas className={styles.canvas} ref={canvasRef} tabIndex={0} />
+      <canvas className={styles.canvas} ref={canvasRef} tabIndex={0} width={1024} height={576} />
     </>
   )
 }
