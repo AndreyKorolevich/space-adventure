@@ -23,6 +23,7 @@ import {
   ProjectileInterface
 } from '../reducers/canvasReducer'
 import { addProjectile } from '../game/operationWithObjects'
+import { bckMusic } from '../utils/sounds'
 
 export type CanvasType = HTMLCanvasElement | null
 
@@ -56,6 +57,7 @@ const Canvas: React.FC<unknown> = () => {
     const bonuses: Array<BonusInterface> = []
 
     fillBackgroundByParticles(backgroundParticles)
+    bckMusic()
 
     const canvas: CanvasType = canvasRef?.current
     const context = canvas?.getContext('2d') as CanvasRenderingContext2D

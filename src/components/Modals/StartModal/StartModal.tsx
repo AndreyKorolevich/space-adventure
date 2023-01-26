@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../../app/hooks'
 import { actionsCanvas } from '../../../actions/canvasAction'
 import Modal from '../Modal'
-import { startGameSound } from '../../../utils/sounds'
+import { buttonSound, startGameSound } from '../../../utils/sounds'
 import controls from '../../../img/controls.png'
 
 const StartModal: React.FC<unknown> = () => {
@@ -11,6 +11,7 @@ const StartModal: React.FC<unknown> = () => {
   const [isShowSecondPhase, setSecondPhase] = useState(false)
 
   const startNewGame = () => {
+    buttonSound()
     dispatch(actionsCanvas.hideStartModalAC())
     startGameSound()
   }

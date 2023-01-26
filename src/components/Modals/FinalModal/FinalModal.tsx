@@ -15,7 +15,7 @@ const FinalModal: React.FC<unknown> = () => {
 
   return (
     <>{isShowModal && <Modal isShowModal={isShowModal} onClick={startNewGame} title={'Game over'}
-                             message={'Your score is: '} buttonText={'Start game'} score={score} />
+                             message={'Your score is: '} buttonText={'New game'} score={score} />
     }</>
   )
 }

@@ -34,13 +34,19 @@ import {
   addNewBomb, addNewBonus,
   addNewEnemies,
   addParticles,
-  addProjectile, checkIntakeBonus,
-  deleteCollision, explodeBomb, moveBomb, removeEmptyEnemyBlock, removeParticles, removeProjectileOfScreen
+  addProjectile,
+  checkIntakeBonus,
+  deleteCollision,
+  explodeBomb,
+  moveBomb,
+  removeEmptyEnemyBlock,
+  removeParticles,
+  removeProjectileOfScreen
 } from '../game/operationWithObjects'
 import { ControllerType } from '../game/controller'
 import { PointType } from '../components/Points/Point'
 import nextId from "react-id-generator";
-import { endGameSound, enemyEliminatedSound, enemyHitSound } from '../utils/sounds'
+import { endGameSound, enemyEliminatedSound } from '../utils/sounds'
 import {
   drawBackground, drawBomb, drawBonusOnCanvas,
   drawCircleOnCanvas,
@@ -48,7 +54,7 @@ import {
   drawParticles,
   drawRectangleOnCanvas
 } from '../game/drawObjects'
-import enemy from '../img/enemy.png'
+
 
 export const actionsCanvas = {
   increaseScoreAC: (count: number) => ({

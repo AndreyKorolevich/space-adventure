@@ -14,18 +14,18 @@ import {
   BONUS_COLOR,
   BONUS_INNER_RADIUS,
   BONUS_OUTER_RADIUS,
-  BONUS_SPIKES, BONUS_TIME, CANVAS_HEIGHT, CANVAS_WIDTH, ENEMY_RADIUS,
-  SHOT_SIZE, SMALL_REWORD_FOR_KILLED_ENEMY,
+  BONUS_SPIKES,
+  BONUS_TIME,
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+  SHOT_SIZE,
   SPIED_SHOTS,
-  xCenter,
-  yCenter
 } from './constants'
-import { calculateObjectVelocity, randomIntFromRange, randomStartPosition } from '../utils/utils'
+import { randomIntFromRange } from '../utils/utils'
 import { ControllerType } from './controller'
-import { obtainPowerUpSound, shootSound } from '../utils/sounds'
+import { bombSound, obtainPowerUpSound, shootSound } from '../utils/sounds'
 import enemy from '../img/enemy.png'
 import gsap from 'gsap'
-import { actionsCanvas } from '../actions/canvasAction'
 
 export const removeProjectileOfScreen = (
   projectiles: Array<ProjectileInterface | EnemyProjectileInterface>,
@@ -90,10 +90,8 @@ export const deleteCollision = (
     enemyBlock.splice(indexE, 1)
   }, 0)
 }
-export const addProjectile = (
-  projectiles: Array<ProjectileInterface>,
-  player: PlayerInterface
-) => {
+
+export const addProjectile = (projectiles: Array<ProjectileInterface>, player: PlayerInterface) => {
   shootSound()
   const velocity = {
     x: 0,
@@ -109,6 +107,7 @@ export const addProjectile = (
   }
   projectiles.push(newProjectile)
 }
+
 export const addNewEnemies = (
   enemies: Array<Array<EnemyInterface>>
 ) => {
@@ -158,6 +157,7 @@ export const removeEmptyEnemyBlock = (
 }
 
 export const explodeBomb = (bomb: BombInterface) => {
+  bombSound()
   bomb.active = true
   bomb.velocity.x = 0
   bomb.velocity.y = 0
