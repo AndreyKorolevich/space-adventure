@@ -20,6 +20,11 @@ export const FREQUENCY_ENEMY_SHOT = 280
 export const FREQUENCY_APPEAR_BONUS = 1000
 export const FPS = 60
 export const PLAYER_SPED = 5
+export const PARTICLE_SPED = 3
+export const DEFAULT_PARTICLE_COLOR = '#BAA0DE'
+export const DEFAULT_PROJECTILE_COLOR = '#ffdac4'
+export const BOMB_COLOR = '#ff1f69'
+export const STAR_COLORS = ['white', '#021F4B', '#4C3B71', '#115268']
 
 
 
@@ -27,9 +32,4 @@ export const CANVAS_WIDTH = 1024
 export const CANVAS_HEIGHT = 576
 
 export const xCenter: number = CANVAS_WIDTH / 2
-export const yCenter: number = CANVAS_HEIGHT / 2
 export const yBottom: number = CANVAS_HEIGHT
-
-
-
-export const rgbRegex = /[.\d]+/g;

@@ -6,28 +6,50 @@ import bcg from '../media/backgroundMusic.wav'
 import explode from '../media/explode.wav'
 import bomb from '../media/bomb.mp3'
 import button from '../media/select.mp3'
+import enemyShoot from '../media/enemyShoot.wav'
 
 export const shootSound = () => {
-  new Audio(shoot).play()
+  const a = new Audio(shoot)
+  a.volume = 0.1
+  a.play()
+}
+export const enemyShootSound = () => {
+  const a = new Audio(enemyShoot)
+  a.volume = 0.2
+  a.play()
 }
 export const startGameSound = () => {
-  new Audio(start).play()
+  const a = new Audio(start)
+  a.volume = 0.2
+  a.play()
 }
 export const bckMusic = () => {
-  new Audio(bcg).play()
+  const a = new Audio(bcg)
+  a.volume = 0.1
+  a.play()
 }
 export const endGameSound = () => {
-  new Audio(gameOver).play()
+  const a = new Audio(gameOver)
+  a.volume = 0.2
+  a.play()
 }
 export const enemyEliminatedSound = () => {
-  new Audio(explode).play()
+  const a = new Audio(explode)
+  a.volume = 0.3
+  a.play()
 }
 export const bombSound = () => {
-  new Audio(bomb).play()
+  const a = new Audio(bomb)
+  a.volume = 0.4
+  a.play()
 }
 export const obtainPowerUpSound = () => {
-  new Audio(bonus).play()
+  const a = new Audio(bonus)
+  a.volume = 0.1
+  a.play()
 }
 export const buttonSound = () => {
-  new Audio(button).play()
+  const a = new Audio(button)
+  a.volume = 0.3
+  a.play()
 }

@@ -8,6 +8,7 @@ import {
 } from '../reducers/canvasReducer'
 import { PlayerInterface } from './Player'
 import {
+  BOMB_COLOR,
   BOMB_RADIUS,
   BONUS_BORDER_COLOR,
   BONUS_BORDER_WIDTH,
@@ -17,9 +18,9 @@ import {
   BONUS_SPIKES,
   BONUS_TIME,
   CANVAS_HEIGHT,
-  CANVAS_WIDTH,
+  CANVAS_WIDTH, DEFAULT_PARTICLE_COLOR, DEFAULT_PROJECTILE_COLOR, PARTICLE_SPED,
   SHOT_SIZE,
-  SPIED_SHOTS,
+  SPIED_SHOTS
 } from './constants'
 import { randomIntFromRange } from '../utils/utils'
 import { ControllerType } from './controller'
@@ -51,13 +52,13 @@ export const addParticles = (
 
   const xCollision = object.x + object.width / 2
   const yCollision = object.y + (object.height / (color ? 1 : 2)) // we change divider to move the center of crating particles for an enemy or the player
-  const particleColor = color || '#BAA0DE'
+  const particleColor = color || DEFAULT_PARTICLE_COLOR
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 10; i++) {
     const particleRadius = Math.random() * 3
     const particleVelocity = {
-      x: (Math.random() - 0.5) * (Math.random() * 3),
-      y: (Math.random() - 0.5) * (Math.random() * 3)
+      x: (Math.random() - 0.5) * (Math.random() * PARTICLE_SPED),
+      y: (Math.random() - 0.5) * (Math.random() * PARTICLE_SPED)
     }
 
     const newParticle: ParticleInterface = {
@@ -102,15 +103,13 @@ export const addProjectile = (projectiles: Array<ProjectileInterface>, player: P
     x: player.x + player.width / 2,
     y: player.y + player.height / 2,
     radius: SHOT_SIZE,
-    color: '#ffdac4',
+    color: DEFAULT_PROJECTILE_COLOR,
     velocity
   }
   projectiles.push(newProjectile)
 }
 
-export const addNewEnemies = (
-  enemies: Array<Array<EnemyInterface>>
-) => {
+export const addNewEnemies = (enemies: Array<Array<EnemyInterface>>) => {
   const image = new Image()
   image.src = enemy
   image.onload = () => {
@@ -118,10 +117,10 @@ export const addNewEnemies = (
     let x = 0
     let y = 0
     const rows = Math.floor(Math.random() * 2) + 3
-    const colms = Math.floor(Math.random() * 6) + 4
+    const columns = Math.floor(Math.random() * 6) + 4
 
     for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < colms; j++) {
+      for (let j = 0; j < columns; j++) {
         const newEnemy: EnemyInterface = {
           speed: 1,
           x,
@@ -181,7 +180,7 @@ export const addNewBomb = (bombs: Array<BombInterface>) => {
       x: (Math.random() - 0.5) * 4,
       y: (Math.random() - 0.5) * 4
     },
-    color: '#ff1f69',
+    color: BOMB_COLOR,
     opacity: 1,
     active: false,
     radius: 0
