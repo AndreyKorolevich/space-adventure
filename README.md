@@ -1,6 +1,6 @@
 # Space-adventure
 
-Deploy: https://easy-peasy-game.netlify.app
+Deploy: https://spacedventures.netlify.app/
 
 
 ![Canvas-game](./public/screen.png)
